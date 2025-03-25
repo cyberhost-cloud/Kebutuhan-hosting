@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saldo Panel</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Saldo Panel</h2>
+        <div id="login-section">
+            <div id="g_id_onload"
+                data-client_id="YOUR_GOOGLE_CLIENT_ID"
+                data-callback="handleCredentialResponse">
+            </div>
+            <div class="g_id_signin" data-type="standard"></div>
+        </div>
+
+        <div id="user-section" style="display: none;">
+            <p>Selamat datang, <span id="user-name"></span></p>
+            <p>Saldo Anda: <strong id="saldo">Rp 0</strong></p>
+
+            <h3>Beli Panel</h3>
+            <button onclick="beliPanel(5000)">Admin Panel - Rp 5.000</button>
+            <button onclick="beliPanel(10000)">PT Panel - Rp 10.000</button>
+            <button onclick="beliPanel(15000)">Owner Panel - Rp 15.000</button>
+
+            <h3>Top Up Saldo</h3>
+            <a href="https://files.catbox.moe/qris.jpg" target="_blank">
+                <button>Scan QRIS</button>
+            </a>
+            <input type="file" id="bukti-transfer">
+            <button onclick="kirimBukti()">Kirim Bukti</button>
+
+            <div id="acc-saldo" style="display: none;">
+                <h3>Acc Saldo</h3>
+                <input type="number" id="jumlah-saldo" placeholder="Jumlah saldo">
+                <button onclick="accSaldo()">Acc Saldo</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userEmail = "";
+
+        function handleCredentialResponse(response) {
+            const responsePayload = decodeJwt(response.credential);
+            userEmail = responsePayload.email;
+            document.getElementById("user-name").innerText = responsePayload.name;
+            document.getElementById("login-section").style.display = "none";
+            document.getElementById("user-section").style.display = "block";
+
+            if (userEmail === "cyberhostxyz@gmail.com") {
+                document.getElementById("acc-saldo").style.display = "block";
+            }
+        }
+
+        function decodeJwt(token) {
+            return JSON.parse(atob(token.split('.')[1]));
+        }
+
+        function beliPanel(harga) {
+            alert("Silakan bayar Rp " + harga + " melalui QRIS.");
+        }
+
+        function kirimBukti() {
+            let file = document.getElementById("bukti-transfer").files[0];
+            if (file) {
+                alert("Bukti transfer berhasil dikirim.");
+                window.open("https://wa.me/6283161010257?text=Min%20mau%20acc%20saldo");
+            } else {
+                alert("Harap unggah bukti transfer!");
+            }
+        }
+
+        function accSaldo() {
+            let jumlah = document.getElementById("jumlah-saldo").value;
+            if (userEmail === "cyberhostxyz@gmail.com" && jumlah > 0) {
+                alert("Saldo sebesar Rp " + jumlah + " telah di-ACC.");
+            } else {
+                alert("Anda tidak memiliki izin!");
+            }
+        }
+    </script>
+</body>
+</html>
